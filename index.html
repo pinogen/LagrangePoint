@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html>
+    <head></head>
+    <body>
+        <h1>ラグランジュポイント　武器合体</h1>
+        <div>目的の武器を選択すると、素材となる武器の組み合わせを一覧表示します。</div>
+        <div>
+            <select id="select_buki" onchange="selected_buki();"></select>
+        </div>
+        <div>
+            <div id="result_text"></div>
+        </div>
+    </body>
+</html>
+<style>
+    body{
+        background-color: #3a3a3a;
+        color:#fff;
+    }
+    .buki_1,.buki_2 {
+        width:200px;
+        
+    }
+    .buki_1,.kakeru ,.buki_2{
+        float:left;
+    }
+    .buki_2 :after{
+        content:"";
+        clear:left;
+    }
+    .ptn{
+        padding:5px;
+    }
+    .osusume{
+        background-color: #d87b24;
+        width: 460px;
+    }
+    .osusume_mark{
+        background-color: #3194f1;
+        width: 40px;
+        margin:5px;
+        float:left;
+    }
+    
+    .rank_1 ,.op_rank_1{background-color: yellow;color:#000;}
+    .rank_2 ,.op_rank_2{background-color: #00ff2a;color:#000;}
+    .rank_3 ,.op_rank_3{background-color: #00f7ff;color:#000;}
+    .rank_4 ,.op_rank_4{background-color: #0026ff;color:#fff;}
+    .rank_5 ,.op_rank_5{background-color: #a200ff;color:#fff;}
+    .rank_6 ,.op_rank_6{background-color: #ff0000;color:#fff;}
+
+    
+    
+</style>
+<script>
+    
+    const buki_data = [];
+    buki_data[0] = {    name: "バトルナイフ",   rank: 1,    element: 1, type: 1    };
+    buki_data[1] = {    name: "でんじガン",     rank: 1,    element: 1, type: 2    };
+    buki_data[2] = {    name: "セラミナイフ",   rank: 1,    element: 2, type: 1    };
+    buki_data[3] = {    name: "コロナじゅう",   rank: 1,    element: 2, type: 2    };
+    buki_data[4] = {    name: "ソニックナイフ", rank: 1,    element: 3, type: 1    };
+    buki_data[5] = {    name: "ニードルガン",   rank: 1,    element: 3, type: 2    };
+    buki_data[6] = {    name: "アイスガン",     rank: 1,    element: 4, type: 1    };
+    buki_data[7] = {    name: "フリーズガン",   rank: 1,    element: 4, type: 2    };
+    buki_data[8] = {    name: "オキシドガン",   rank: 1,    element: 5, type: 1    };
+    buki_data[9] = {    name: "ようえきじゅう", rank: 1,    element: 5, type: 2    };
+    buki_data[10] = {   name: "セラミソーサー", rank: 1,    element: 6, type: 1    };
+    buki_data[11] = {   name: "さいきんじゅう", rank: 1,    element: 6, type: 2    };
+
+    buki_data[12] = {    name: "エレキスティック",   rank: 2,    element: 1, type: 1    };
+    buki_data[13] = {    name: "プラズマガン",     rank: 2,    element: 1, type: 2    };
+    buki_data[14] = {    name: "ほうねつナイフ",   rank: 2,    element: 2, type: 1    };
+    buki_data[15] = {    name: "ファイアガン",     rank: 2,    element: 2, type: 2    };
+    buki_data[16] = {    name: "ビームサーベル",   rank: 2,    element: 3, type: 1    };
+    buki_data[17] = {    name: "おんぱじゅう",     rank: 2,    element: 3, type: 2    };
+    buki_data[18] = {    name: "せきかじゅう",   rank: 2,    element: 4, type: 1    };
+    buki_data[19] = {    name: "ソリッドガン",     rank: 2,    element: 4, type: 2    };
+    buki_data[20] = {    name: "どくばりじゅう",   rank: 2,    element: 5, type: 1    };
+    buki_data[21] = {    name: "アシッドガン",     rank: 2,    element: 5, type: 2    };
+    buki_data[22] = {    name: "メタルソーサー",   rank: 2,    element: 6, type: 1    };
+    buki_data[23] = {    name: "ソーラーガン",     rank: 2,    element: 6, type: 2    };
+
+    buki_data[24] = {    name: "スパークサーベル",   rank: 3,    element: 1, type: 1    };
+    buki_data[25] = {    name: "アルファライフル",     rank: 3,    element: 1, type: 2    };
+    buki_data[26] = {    name: "ヒートサーベル",   rank: 3,    element: 2, type: 1    };
+    buki_data[27] = {    name: "ヒートライフル",     rank: 3,    element: 2, type: 2    };
+    buki_data[28] = {    name: "ビームソード",   rank: 3,    element: 3, type: 1    };
+    buki_data[29] = {    name: "ぶんしライフル",     rank: 3,    element: 3, type: 2    };
+    buki_data[30] = {    name: "フリーズライフル",   rank: 3,    element: 4, type: 1    };
+    buki_data[31] = {    name: "とうけつライフル",     rank: 3,    element: 4, type: 2    };
+    buki_data[32] = {    name: "ふしょくライフル",   rank: 3,    element: 5, type: 1    };
+    buki_data[33] = {    name: "オキシドライフル",     rank: 3,    element: 5, type: 2    };
+    buki_data[34] = {    name: "カッターリング",   rank: 3,    element: 6, type: 1    };
+    buki_data[35] = {    name: "イオンライフル",     rank: 3,    element: 6, type: 2    };
+
+    buki_data[36] = {    name: "プラズマソード",   rank: 4,    element: 1, type: 1    };
+    buki_data[37] = {    name: "ベータバズーカ",     rank: 4,    element: 1, type: 2    };
+    buki_data[38] = {    name: "ニクロムソード",   rank: 4,    element: 2, type: 1    };
+    buki_data[39] = {    name: "ゾルバズーカ",     rank: 4,    element: 2, type: 2    };
+    buki_data[40] = {    name: "こうそくけん",      rank: 4,    element: 3, type: 1    };
+    buki_data[41] = {    name: "ソニックバズーカ",     rank: 4,    element: 3, type: 2    };
+    buki_data[42] = {    name: "ソリッドバズーカ",   rank: 4,    element: 4, type: 1    };
+    buki_data[43] = {    name: "せきかバズーカ",     rank: 4,    element: 4, type: 2    };
+    buki_data[44] = {    name: "ルフトバズーカ",   rank: 4,    element: 5, type: 1    };
+    buki_data[45] = {    name: "ウイルスバズーカ",     rank: 4,    element: 5, type: 2    };
+    buki_data[46] = {    name: "セラミブーメラン",   rank: 4,    element: 6, type: 1    };
+    buki_data[47] = {    name: "イオンバズーカ",     rank: 4,    element: 6, type: 2    };
+
+    buki_data[48] = {    name: "ちょうでんけん",   rank: 5,    element: 1, type: 1    };
+    buki_data[49] = {    name: "ガンマーほう",     rank: 5,    element: 1, type: 2    };
+    buki_data[50] = {    name: "はくねつけん",   rank: 5,    element: 2, type: 1    };
+    buki_data[51] = {    name: "コロイドほう",   rank: 5,    element: 2, type: 2    };
+    buki_data[52] = {    name: "ばくれつけん", rank: 5,    element: 3, type: 1    };
+    buki_data[53] = {    name: "りゅうしほう",   rank: 5,    element: 3, type: 2    };
+    buki_data[54] = {    name: "フリーズほう",     rank: 5,    element: 4, type: 1    };
+    buki_data[55] = {    name: "ブリザードほう",   rank: 5,    element: 4, type: 2    };
+    buki_data[56] = {    name: "ウイルスほう",   rank: 5,    element: 5, type: 1    };
+    buki_data[57] = {    name: "ルフトキャノン", rank: 5,    element: 5, type: 2    };
+    buki_data[58] = {    name: "メタルブーメラン", rank: 5,    element: 6, type: 1    };
+    buki_data[59] = {    name: "クリスタルほう", rank: 5,    element: 6, type: 2    };
+
+    buki_data[60] = {    name: "かでんしほうa",   rank: 6,    element: 1, type: 1    };
+    buki_data[61] = {    name: "コロナほうa",     rank: 6,    element: 1, type: 2    };
+    buki_data[62] = {    name: "じゅうりょくほうa",   rank: 6,    element: 2, type: 1    };
+    buki_data[63] = {    name: "ぜったい0どほうa",   rank: 6,    element: 2, type: 2    };
+    buki_data[64] = {    name: "かでんしほうb", rank: 6,    element: 3, type: 1    };
+    buki_data[65] = {    name: "コロナほうb",   rank: 6,    element: 3, type: 2    };
+    buki_data[66] = {    name: "じゅうりょくほうb",     rank: 6,    element: 4, type: 1    };
+    buki_data[67] = {    name: "ぜったい0どほうb",   rank: 6,    element: 4, type: 2    };
+    buki_data[68] = {    name: "かでんしほうc",   rank: 6,    element: 5, type: 1    };
+    buki_data[69] = {    name: "コロナほうc", rank: 6,    element: 5, type: 2    };
+    buki_data[70] = {    name: "じゅうりょくほうc", rank: 6,    element: 6, type: 1    };
+    buki_data[71] = {    name: "ぜったい0どほうc", rank: 6,    element: 6, type: 2    };
+
+    //console.log(buki_data);
+
+function buki_option_html(){
+    let w_html;
+    w_html += "<option value='-1'>武器を選択してください</option>\n";
+    for(let i=0;i<buki_data.length;i++){
+        if(buki_data[i]["rank"] == 1) continue;
+        w_html += "<option class='op_rank_" + buki_data[i]["rank"] + "' value='" + i + "'>" + buki_data[i]["name"] + "[R."+ buki_data[i]["rank"] +"]" + "</option>\n";
+    }
+    return w_html;
+}
+
+window.addEventListener('DOMContentLoaded', function(){
+    let select_buki = document.getElementById("select_buki");
+    select_buki.innerHTML = buki_option_html();
+});
+
+
+function selected_buki(){
+    let select_buki = document.getElementById("select_buki");
+    let buki_id = select_buki.value;
+    let result_text = document.getElementById("result_text");
+
+    if(buki_id >= 1){
+        select_buki.className = "rank_" + buki_data[buki_id]["rank"];
+    }else{
+        select_buki.className = "";
+        result_text.innerHTML = "";
+        return;
+    }
+
+    //武器1と武器2にどんなrankが必要か？
+    let ptn_rank;
+    ptn_rank = rank_confirm(buki_data[buki_id]["rank"]);
+    //console.log(ptn_rank);
+
+    //武器1と武器2にどんなelementが必要か？
+    let ptn_element;
+    ptn_element = element_confirm(buki_data[buki_id]["element"]);
+    //console.log(ptn_element);
+
+    //武器1と武器2にどんなtypeが必要か？
+    let ptn_type;
+    ptn_type = type_confirm(buki_data[buki_id]["type"]);
+    //console.log(ptn_type);
+
+    let gaitou_buki_1=[],gaitou_buki_2=[];
+
+    for(let r=0;r<ptn_rank.length;r++){
+        for(let e=0;e<ptn_element.length;e++){
+            for(let t=0;t<ptn_type.length;t++){
+                gaitou_buki_1.push(buki_search(ptn_rank[r][0],ptn_element[e][0],ptn_type[t][0]));
+                gaitou_buki_2.push(buki_search(ptn_rank[r][1],ptn_element[e][1],ptn_type[t][1]));
+            }
+        }
+    }
+    //console.log(gaitou_buki_1);
+    //console.log(gaitou_buki_2);
+
+    let buki_text = "";
+    let buki_text_1 = "";
+    let buki_text_2 = "";
+    
+    let osusume = "";
+    if(gaitou_buki_1.length>0){
+        for(let i=0;i<gaitou_buki_1.length;i++){
+            if(buki_data[gaitou_buki_1[i]]["rank"] == buki_data[gaitou_buki_2[i]]["rank"] && ((buki_data[buki_id]["rank"]-1) == buki_data[gaitou_buki_1[i]]["rank"])){
+                osusume = " osusume";
+
+                buki_text_1 += "<div class='osusume_mark'>ｵｽｽﾒ</div>\n";
+                buki_text_1 += "<div class='ptn" + osusume + "'>\n";
+                buki_text_1 += "<div class='buki_1 rank_" + buki_data[gaitou_buki_1[i]]["rank"] + "'>" + buki_data[gaitou_buki_1[i]]["name"] + "[R."+ buki_data[gaitou_buki_1[i]]["rank"] +"]" + "</div>" + "<div class='kakeru'>x</div>" + "<div class='buki_2 rank_" + buki_data[gaitou_buki_2[i]]["rank"] + "'>" + buki_data[gaitou_buki_2[i]]["name"] + "[R."+ buki_data[gaitou_buki_2[i]]["rank"] +"]"+ "</div>" + "<br>\n";
+                buki_text_1 += "</div>\n";
+            }else{
+                osusume = "";
+                
+                buki_text_2 += "<div class='ptn" + osusume + "'>\n";
+                buki_text_2 += "<div class='buki_1 rank_" + buki_data[gaitou_buki_1[i]]["rank"] + "'>" + buki_data[gaitou_buki_1[i]]["name"] + "[R."+ buki_data[gaitou_buki_1[i]]["rank"] +"]" + "</div>" + "<div class='kakeru'>x</div>" + "<div class='buki_2 rank_" + buki_data[gaitou_buki_2[i]]["rank"] + "'>" + buki_data[gaitou_buki_2[i]]["name"] + "[R."+ buki_data[gaitou_buki_2[i]]["rank"] +"]"+ "</div>" + "<br>\n";
+                buki_text_2 += "</div>\n";
+            }
+            buki_text = buki_text_1 + buki_text_2;
+        }
+    }
+    result_text.innerHTML = buki_text;
+}
+
+
+function buki_search(rank,element,type){
+    let buki_id;
+    for(let i=0;i<buki_data.length;i++){
+        if(buki_data[i]["rank"] == rank && buki_data[i]["element"] == element && buki_data[i]["type"] == type ){
+            buki_id = i;
+        }
+    }
+    return buki_id;
+}
+/*
+1:electricity	
+2:heat radiation
+3:wave
+4:freezing
+5:corrosion	
+6:special
+
+	    電気	熱射	波動	凍結	腐食	特殊
+電気	熱射	波動	凍結	腐食	特殊	電気
+熱射	波動	波動	腐食	電気	特殊	熱射
+波動	凍結	腐食	凍結	特殊	電気	波動
+凍結	腐食	電気	特殊	腐食	熱射	凍結
+腐食	特殊	特殊	電気	熱射	特殊	熱射
+特殊	電気	熱射	波動	凍結	熱射	電気
+
+	1	2	3	4	5	6
+1	2	3	4	5	6	1
+2	3	3	5	1	6	2
+3	4	5	4	6	1	3
+4	5	1	6	5	2	4
+5	6	6	1	2	6	2
+6	1	2	3	4	2	1
+
+*/
+function element_confirm(element){
+    let ptn_e = [];
+    if(element == 1){
+        ptn_e[0] = {0: 1, 1: 6};
+        ptn_e[1] = {0: 2, 1: 4};
+        ptn_e[2] = {0: 3, 1: 5};
+    }
+    if(element == 2){
+        ptn_e[0] = {0: 1, 1: 1};
+        ptn_e[1] = {0: 2, 1: 6};
+        ptn_e[2] = {0: 4, 1: 5};
+    }
+    if(element == 3){
+        ptn_e[0] = {0: 1, 1: 2};
+        ptn_e[1] = {0: 2, 1: 2};
+        ptn_e[2] = {0: 3, 1: 6};
+    }
+    if(element == 4){
+        ptn_e[0] = {0: 1, 1: 3};
+        ptn_e[1] = {0: 3, 1: 3};
+        ptn_e[2] = {0: 4, 1: 6};
+    }
+    if(element == 5){
+        ptn_e[0] = {0: 1, 1: 4};
+        ptn_e[1] = {0: 2, 1: 3};
+        ptn_e[2] = {0: 4, 1: 4};
+    }
+    if(element == 6){
+        ptn_e[0] = {0: 1, 1: 5};
+        ptn_e[1] = {0: 2, 1: 5};
+        ptn_e[2] = {0: 3, 1: 4};
+        ptn_e[3] = {0: 5, 1: 5};
+    }
+    return ptn_e;
+}
+
+
+/*
+	1	2	3	4	5	6
+1	2	2	3	3	4	4
+2	2	3	3	4	4	5
+3	3	3	4	4	5	5
+4	3	4	4	5	5	6
+5	4	4	5	5	6	6
+6	4	5	5	6	6	1
+*/
+
+function rank_confirm(rank){
+    let ptn_r = [];
+    if(rank == 1){
+        ptn_r[0] = {0: 6, 1: 6};
+    }
+    if(rank == 2){
+          ptn_r[0] = {0: 1, 1: 1};
+        ptn_r[1] = {0: 1, 1: 2};
+        
+    }
+    if(rank == 3){
+        ptn_r[0] = {0: 1, 1: 3};
+        ptn_r[1] = {0: 1, 1: 4};
+        ptn_r[2] = {0: 2, 1: 2};
+        ptn_r[3] = {0: 2, 1: 3};
+    }
+    if(rank == 4){
+        ptn_r[0] = {0: 1, 1: 5};
+        ptn_r[1] = {0: 1, 1: 6};
+        ptn_r[2] = {0: 2, 1: 4};
+        ptn_r[3] = {0: 2, 1: 5};
+        ptn_r[4] = {0: 3, 1: 3};
+        ptn_r[5] = {0: 3, 1: 4};
+    }
+    if(rank == 5){
+
+        ptn_r[0] = {0: 2, 1: 6};
+        ptn_r[1] = {0: 3, 1: 5};
+        ptn_r[2] = {0: 3, 1: 6};
+        ptn_r[3] = {0: 4, 1: 4};
+        ptn_r[4] = {0: 4, 1: 5};
+    }
+    if(rank == 6){
+
+        ptn_r[0] = {0: 4, 1: 6};
+        ptn_r[1] = {0: 5, 1: 5};
+        ptn_r[2] = {0: 5, 1: 6};
+    }
+    return ptn_r;
+}
+
+
+
+/*
+	    単体	全体
+単体	全体	単体
+全体	単体	全体
+
+	1	2
+1	2	1
+2	1	2
+*/
+function type_confirm(type){
+    let ptn_t = [];
+    if(type == 1){
+        ptn_t[0] = {0: 1, 1: 2};
+        ptn_t[1] = {0: 2, 1: 1};
+    }
+    if(type == 2){
+        ptn_t[0] = {0: 1, 1: 1};
+        ptn_t[1] = {0: 2, 1: 2};
+    }
+    return ptn_t;
+}
+
+
+</script>
