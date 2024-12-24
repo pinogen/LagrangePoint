@@ -1,12 +1,11 @@
-<!DOCTYPE html>
 <html>
     <head>
 	<meta charset="utf-8" />
-    	<title>ラグランジュポイント　武器合体</title>
+    	<title>ラグランジュポイント 武器合体</title>
 	<meta name="description" content="目的の武器を選択すると、素材となる武器の組み合わせを一覧表示します。" />
     </head>
     <body>
-        <h1>ラグランジュポイント　武器合体</h1>
+        <h1>ラグランジュポイント 武器合体</h1>
         <div>
 		目的の武器を選択すると、素材となる武器の組み合わせを一覧表示します。<br>
 		※ランク6だけ特殊なので、武器名のa,b,cは便宜上のものです。
@@ -31,8 +30,7 @@
     .buki_1,.kakeru ,.buki_2{
         float:left;
     }
-    .buki_2 :after{
-        content:"";
+    .cf {
         clear:left;
     }
     .ptn{
@@ -40,10 +38,10 @@
     }
     .osusume{
         background-color: #d87b24;
-        width: 590px;
+        width: 500px;
     }
     #result_text{
-        width: 600px;
+        width: 500px;
     }
     .osusume_mark{
         background-color: #3194f1;
@@ -63,7 +61,64 @@
     
 </style>
 <script>
-    
+    /*
+1:electricity	
+2:heat radiation
+3:wave
+4:freezing
+5:corrosion	
+6:special
+
+1:Single
+2:All
+
+
+1
+電気	バトルナイフ	10×2	20	でんじガン	5×2	40	4	4	35
+熱射	セラミナイフ	15×2	20	コロナじゅう	10×2	40	4	4	65
+波動	ソニックナイフ	22×2	40	ニードルガン	15×2	40	10	10	100
+凍結	アイスガン	37×2	40	フリーズガン	20×2	60	10	10	180
+腐食	オキシドガン	45×2	40	ようえきじゅう	25×2	60	20	10	250
+特殊	セラミソーサー	45×2	50	さいきんじゅう	30×2	60	20	10	340
+
+2
+電気	エレキスティック	55×3	70	プラズマガン	40×2	100	40	27	500
+熱射	ほうねつナイフ	60×3	70	ファイアガン	45×2	100	43	34	630
+波動	ビームサーベル	65×3	70	おんぱじゅう	50×2	100	51	34	760
+凍結	せきかじゅう	92×3	70	ソリッドガン	55×2	100	61	40	1000
+腐食	どくばりじゅう	92×3	70	アシッドガン	60×2	100	42	56	1290
+特殊	メタルソーサー	80×3	70	ソーラーガン	65×2	100	47	45	1600
+
+3
+電気	スパークサーベル	95×5	110	アルファライフル	75×3	130	60	53	3000
+熱射	ヒートサーベル	100×5	110	ヒートライフル	80×3	130	70	49	4000
+波動	ビームソード	105×5	110	ぶんしライフル	85×3	130	72	60	5000
+凍結	フリーズライフル	119×5	110	とうけつライフル	90×3	130	85	61	6000
+腐食	ふしょくライフル	119×5	110	オキシドライフル	95×3	130	62	73	7000
+特殊	カッターリング	120×5	110	イオンライフル	100×3	130	68	67	8000
+
+4
+電気	プラズマソード※	135×3	110	ベータバズーカ	115×4	170	88	85	15000
+熱射	ニクロムソード	140×8	110	ゾルバズーカ	120×4	170	88	78	16000
+波動	こうそくけん	145×8	120	ソニックバズーカ	125×4	170	96	84	18000
+凍結	ソリッドバズーカ	178×8	120	せきかバズーカ	130×4	170	108	78	20000
+腐食	ルフトバズーカ	178×8	130	ウイルスバズーカ	135×4	170	80	104	23000
+特殊	セラミブーメラン	160×8	130	イオンバズーカ	140×4	170	104	90	25000
+
+5
+電気	ちょうでんけん	170×10	120	ガンマーほう	170×5	200	100	94	30000
+熱射	はくねつけん	175×10	120	コロイドほう	175×5	200	100	100	32000
+波動	ばくれつけん	180×10	140	りゅうしほう	180×5	200	100	116	34000
+凍結	フリーズほう	212×10	140	ブリザードほう	185×5	200	130	105	37000
+腐食	ウイルスほう	217×10	160	ルフトキャノン	190×5	200	103	127	40000
+特殊	メタルブーメラン	195×10	160	クリスタルほう	195×5	200	120	120	44000
+
+6
+？？	－	かでんしほう	210×14	180	103	143	61000
+？？	－	コロナほう	220×15	180	140	135	62500
+？？	－	じゅうりょくほう	235×16	180	142	146	64000
+？？	－	ぜったい0どほう	255×17	180	143	157	65000
+    */
     const buki_data = [];
     buki_data[0] = {    name: "バトルナイフ",   rank: 1,    element: 1, type: 1    };
     buki_data[1] = {    name: "でんじガン",     rank: 1,    element: 1, type: 2    };
@@ -214,13 +269,13 @@ function selected_buki(){
 
                 buki_text_1 += "<div class='osusume_mark'>ｵｽｽﾒ</div>\n";
                 buki_text_1 += "<div class='ptn" + osusume + "'>\n";
-                buki_text_1 += "<div class='buki_1 rank_" + buki_data[gaitou_buki_1[i]]["rank"] + "'>" + buki_data[gaitou_buki_1[i]]["name"] + "[R."+ buki_data[gaitou_buki_1[i]]["rank"] +"]" + "</div>" + "<div class='kakeru'>x</div>" + "<div class='buki_2 rank_" + buki_data[gaitou_buki_2[i]]["rank"] + "'>" + buki_data[gaitou_buki_2[i]]["name"] + "[R."+ buki_data[gaitou_buki_2[i]]["rank"] +"]"+ "</div>" + "\n";
+                buki_text_1 += "<div class='buki_1 rank_" + buki_data[gaitou_buki_1[i]]["rank"] + "'>" + buki_data[gaitou_buki_1[i]]["name"] + "[R."+ buki_data[gaitou_buki_1[i]]["rank"] +"]" + "</div>" + "<div class='kakeru'>x</div>" + "<div class='buki_2 rank_" + buki_data[gaitou_buki_2[i]]["rank"] + "'>" + buki_data[gaitou_buki_2[i]]["name"] + "[R."+ buki_data[gaitou_buki_2[i]]["rank"] +"]"+ "</div>" + "<br class='cf'>\n";
                 buki_text_1 += "</div>\n";
             }else{
                 osusume = "";
                 
                 buki_text_2 += "<div class='ptn" + osusume + "'>\n";
-                buki_text_2 += "<div class='buki_1 rank_" + buki_data[gaitou_buki_1[i]]["rank"] + "'>" + buki_data[gaitou_buki_1[i]]["name"] + "[R."+ buki_data[gaitou_buki_1[i]]["rank"] +"]" + "</div>" + "<div class='kakeru'>x</div>" + "<div class='buki_2 rank_" + buki_data[gaitou_buki_2[i]]["rank"] + "'>" + buki_data[gaitou_buki_2[i]]["name"] + "[R."+ buki_data[gaitou_buki_2[i]]["rank"] +"]"+ "</div>" + "\n";
+                buki_text_2 += "<div class='buki_1 rank_" + buki_data[gaitou_buki_1[i]]["rank"] + "'>" + buki_data[gaitou_buki_1[i]]["name"] + "[R."+ buki_data[gaitou_buki_1[i]]["rank"] +"]" + "</div>" + "<div class='kakeru'>x</div>" + "<div class='buki_2 rank_" + buki_data[gaitou_buki_2[i]]["rank"] + "'>" + buki_data[gaitou_buki_2[i]]["name"] + "[R."+ buki_data[gaitou_buki_2[i]]["rank"] +"]"+ "</div>" + "<br class='cf'>\n";
                 buki_text_2 += "</div>\n";
             }
             buki_text = buki_text_1 + buki_text_2;
